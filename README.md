@@ -7,6 +7,7 @@ All units are implicitly converted to their base value, where then different def
 - `units.h` Base unit definition file.
 - `basic.h` Includes very basic units like the meter, mole, kilogram, candela, etc.
 - `si.h` Includes all SI units and definitions.
+- `time.h` Includes basic tim
 - `astro.h` Includes standard static astronomical units. Measurements with uncertainty like *galactic year* and *lunar distance* are not yet included.
 #### Planned Files:
 - `imperial.h` Includes all basic imperial units like foot, yard, etc.
