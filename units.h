@@ -4,8 +4,7 @@
 
 namespace cunits {
     /* Ideas for new features:
-    * 1. Literals
-    * 2. Uncertainty (a±b)
+    * 1. Uncertainty (a±b)
     */
 
     enum BaseUnit { METER, KILOGRAM, SECOND, AMPERE, KELVIN, MOLE, CANDELA };
@@ -18,7 +17,7 @@ namespace cunits {
             exp = _exp;
         }
     };
-    static bool operator==(UnitPart a, UnitPart b) {
+    static bool operator ==(UnitPart a, UnitPart b) {
         return a.type == b.type && a.exp == b.exp;
     }
 
@@ -26,6 +25,9 @@ namespace cunits {
     public:
         std::vector<UnitPart> parts;
         double value;
+        Unit(double _value) {
+            value = _value;
+        }
         Unit(std::vector<UnitPart> _parts, double _value) {
             parts = _parts;
             value = _value;
@@ -36,7 +38,7 @@ namespace cunits {
         }
     };
     // Unit Operators
-    static Unit operator*(Unit a, Unit b) {
+    static Unit operator *(Unit a, Unit b) {
         std::vector<UnitPart> parts = a.parts;
         for (UnitPart& part : b.parts) {
             std::vector<UnitPart>::iterator it = std::find(parts.begin(), parts.end(), part);
@@ -50,29 +52,36 @@ namespace cunits {
         return Unit(parts, a.value * b.value);
         return a;
     }
-    static Unit operator*(Unit u, double d) {
+    static Unit operator *(Unit u, double d) {
         return Unit(u.parts, u.value * d);
     }
-    static Unit operator*(double d, Unit u) {
+    static Unit operator *(double d, Unit u) {
         return Unit(u.parts, u.value * d);
     }
 
-    static Unit operator/(Unit a, Unit b) {
+    static Unit operator /(Unit a, Unit b) {
         for (UnitPart& p : b.parts) {
             p.exp *= -1;
         }
         b.value = 1 / b.value;
         return a * b;
     }
-    static Unit operator/(Unit u, double d) {
+    static Unit operator /(Unit u, double d) {
         u.value /= d;
         return u;
     }
-    static Unit operator/(double d, Unit u) {
+    static Unit operator /(double d, Unit u) {
         for (UnitPart& p : u.parts) {
             p.exp *= -1;
         }
         u.value = d / u.value;
         return u;
+    }
+
+    Unit operator "" c(unsigned long long int i) {
+        return Unit(i);
+    }
+    Unit operator "" c(long double d) {
+        return Unit(d);
     }
 }
