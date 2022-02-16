@@ -1,4 +1,5 @@
 #include <vector>
+#include <map>
 #include <algorithm>
 #pragma once
 
@@ -37,16 +38,42 @@ namespace cunits {
             value = _value;
         }
     };
-    // Unit Operators
-    static Unit operator *(Unit a, Unit b) {
-        std::vector<UnitPart> parts = a.parts;
-        for (UnitPart& part : b.parts) {
-            std::vector<UnitPart>::iterator it = std::find(parts.begin(), parts.end(), part);
-            if (it == parts.end()) {
-                parts.push_back(part);
+    // Unit Instance Functions
+    void simplify() {
+        this = this.simplified();
+    }
+    Unit simplified() {
+        std::vector<UnitPart> newparts;
+        for (UnitPart p : parts) {
+            auto isSameType = [](UnitPart up) { return up.type == p.type; }
+            std::vector<UnitPart>::iterator itr = std::ranges::find_if(newparts, isSamePart);
+            size_t index = std::distance(parts.begin(), itr);
+            if (index == parts.cend()) {
+                newparts.push_back(p);
             }
             else {
-                part.exp *= next(it)->exp;
+                newparts.at(index).exp += p.exp;
+            }
+        }
+        std::vector<UnitPart> trimmedparts;
+        for (UnitPart p : newparts) {
+            if (p.exp != 0) {
+                trimmedparts.push_back(p);
+            }
+        }
+        return Unit(trimmedparts, value);
+    }
+    
+    // Unit Operators
+    static Unit operator *(Unit a, Unit b) {
+        std::vector<UnitPart> newparts = a.parts;
+        for (UnitPart& part : b.parts) {
+            std::vector<UnitPart>::iterator it = std::ranges::find(newparts, part);
+            if (it == newparts.end()) {
+                newparts.push_back(part);
+            }
+            else {
+                newpart.exp *= next(it)->exp;
             }
         }
         return Unit(parts, a.value * b.value);
